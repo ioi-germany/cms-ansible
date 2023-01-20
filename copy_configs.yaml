@@ -1,0 +1,36 @@
+---
+- name: Copy CMS server files
+  hosts: all
+  tasks:
+    - name: Copy cms.conf
+      become: yes
+      copy:
+        src: "{{ cmsconf }}"
+        dest: /usr/local/etc/cms.conf
+        owner: cmsuser
+        group: cmsuser
+        backup: yes
+    - name: Copy cms.ranking.conf
+      become: yes
+      copy:
+        src: "{{ cmsrankingconf }}"
+        dest: /usr/local/etc/cms.ranking.conf
+        owner: cmsuser
+        group: cmsuser
+        backup: yes
+    - name: Copy isolate
+      become: yes
+      copy:
+        src: "{{ isolate }}"
+        dest: /usr/local/etc/isolate
+        owner: root
+        group: cmsuser
+        backup: yes
+    - name: Copy nginx conf
+      become: yes
+      copy:
+        src: "{{ cmsnginxconf }}"
+        dest: /etc/nginx/sites-available/
+        owner: root
+        group: root
+        backup: yes

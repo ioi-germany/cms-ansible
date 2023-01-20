@@ -1,0 +1,32 @@
+---
+- name: Set contest ID and restart CMS Resource Service
+  hosts: all
+  vars_prompt:
+    - name: contest_id
+      prompt: Which contest ID would you like to start? (ALL for multi-contest mode)
+      private: no
+  tasks:
+    #This is informational only
+    - name: Get and print contest IDs
+      shell:
+        cmd: "/home/cms/cms_venv/bin/cmsResourceService -a || /bin/true"
+        stdin: "x"
+      register: contests_out
+      failed_when: '"Insert the row number" not in contests_out.stdout'
+      changed_when: False
+    #This, too
+    - name: Print available contests
+      debug:
+        msg: '{{ contests_out.stdout_lines }}'
+    - name: Set contest ID
+      lineinfile:
+        path: /home/cms/resource-service.conf
+        regexp: '^CONTEST_ID='
+        line: 'CONTEST_ID={{ contest_id }}'
+  handlers:
+    #Only restart when the contest ID has changed
+    - name: Restart CMS Resource Service
+      systemd:
+        state: restarted
+        name: "cms-resource.service"
+      become: yes

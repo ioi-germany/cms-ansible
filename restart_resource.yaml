@@ -1,0 +1,9 @@
+---
+- name: Restart CMS Resource Service
+  hosts: all
+  tasks:
+    - name: Restart CMS Resource Service
+      systemd:
+        state: restarted
+        name: "cms-resource.service"
+      become: yes
